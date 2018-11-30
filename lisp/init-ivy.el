@@ -9,7 +9,7 @@
                   ivy-magic-tilde nil
                   ivy-dynamic-exhibit-delay-ms 150
                   ivy-initial-inputs-alist
-                  '((man . "^")
+                  '((Man-completion-table . "^")
                     (woman . "^")))
 
     ;; IDO-style directory navigation
@@ -30,7 +30,7 @@
                   '((t . ivy--regex-fuzzy)))))
 
 (when (maybe-require-package 'ivy-historian)
-  (add-hook 'after-init-hook (lambda () (ivy-historian-mode t))))
+  (add-hook 'after-init-hook 'ivy-historian-mode))
 
 (when (maybe-require-package 'counsel)
   (setq-default counsel-mode-override-describe-bindings t)
@@ -48,7 +48,7 @@
             ((executable-find "ack") 'counsel-ack))))
       (when search-function
         (defun sanityinc/counsel-search-project (initial-input &optional use-current-dir)
-          "Search using `counsel-ag' from the project root for INITIAL-INPUT.
+          "Search using `counsel-rg' or similar from the project root for INITIAL-INPUT.
 If there is no project root, or if the prefix argument
 USE-CURRENT-DIR is set, then search from the current directory
 instead."
@@ -61,6 +61,8 @@ instead."
                            (projectile-project-root)
                          (error default-directory)))))
             (funcall search-function initial-input dir)))))
+    (after-load 'ivy
+      (add-to-list 'ivy-height-alist (cons 'counsel-ag 20)))
     (global-set-key (kbd "M-?") 'sanityinc/counsel-search-project)))
 
 
